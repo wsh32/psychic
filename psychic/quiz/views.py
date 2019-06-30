@@ -1,9 +1,11 @@
+import json
+
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
 from django.http import HttpResponse
 from dicttoxml import dicttoxml
 
-from .models import Question
+from .models import Quiz, Question, Choice
 
 
 class IndexView(generic.ListView):
@@ -14,35 +16,30 @@ class IndexView(generic.ListView):
         """
         Return the last 5 valid published quizzes
         """
-        return Question.objects.order_by('-pub_date')[:5]
+        return Quiz.objects.order_by('-pub_date')[:5]
 
-def index(request):
-    # TODO load list template
-    return HttpResponse("Hello World!")
+
+class QuizView(generic.DetailView):
+    context_object_name = 'quiz'
+    template_name = 'quiz/quiz.html'
+    model = Quiz
+
 
 class QuestionView(generic.DetailView):
+    context_object_name = 'question'
     template_name = 'quiz/question.html'
     model = Question
 
-def question(request, pk):
-    question = get_object_or_404(Question, pk=pk)
-    context = {
-        'question': question,
-    }
 
-    return render(request, 'quiz/question.html', context)
-
-def submit(request, question_id):
-    question = get_object_or_404(Question, pk=question_id)
-    try:
-        choice = question.choice_set.get(pk=request.POST['choice'])
-        choice_text = choice.choice_text
-    except (KeyError, Choice.DoesNotExist):
-        choice_text = "Error 404"
-    return_data = {
-        'question_text': question.question_text,
-        'choice': choice_text,
-    }
-    xml_response = dicttoxml(return_data)
-    return HttpResponse(xml_response, content_type='application/xml')
+def submit(request, quiz_id, question_format="question{}"):
+    quiz = get_object_or_404(Quiz, pk=quiz_id)
+    quiz_results = {}
+    for question in quiz.question_set.all():
+        if not question_format.format(question.id) in request.POST.keys():
+            # Throw error for unfinished quiz
+            pass
+        else:
+            selected_choice = get_object_or_404(Choice, pk=request.POST[question_format.format(question.id)])
+            quiz_results[question.question_text] = selected_choice.choice_text
+    return HttpResponse(json.dumps(quiz_results))
 

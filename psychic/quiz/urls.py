@@ -5,7 +5,6 @@ from . import views
 app_name = 'quiz'
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
-    path('<int:pk>/', views.QuestionView.as_view(), name='question'),
-    path('<int:question_id>/submit', views.submit, name='submit'),
-    path('quiz/<int:question_id>/', views.question, name='quiz'),
+    path('<int:pk>/', views.QuizView.as_view(), name='quiz'),
+    path('<int:quiz_id>/submit', views.submit, name='submit'),
 ]
