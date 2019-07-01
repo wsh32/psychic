@@ -63,5 +63,16 @@ def submit(request, quiz_id, question_format="question{}"):
 
     quiz_results['prediction'] = final_prediction.prediction_title
 
+    # Collect client data
+    client_data = {
+        'server_name': request.META['SERVER_NAME'],
+        'server_port': request.META['SERVER_PORT'],
+        'http_host': request.META['HTTP_HOST'],
+        'http_user_agent': request.META['HTTP_USER_AGENT'],
+        'clinet_ip': request.META['REMOTE_ADDR'],
+    }
+
+    quiz_results['client_data'] = client_data
+
     return HttpResponse(json.dumps(quiz_results))
 
