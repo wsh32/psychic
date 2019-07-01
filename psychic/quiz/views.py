@@ -2,10 +2,11 @@ import json
 
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from dicttoxml import dicttoxml
 
 from .models import Quiz, Question, Choice, Prediction
+from .settings import DEBUG
 
 
 class IndexView(generic.ListView):
@@ -16,7 +17,7 @@ class IndexView(generic.ListView):
         """
         Return all valid quizzes
         """
-        return [quiz for quiz in Quiz.objects.all() if quiz.is_active()]
+        return [quiz for quiz in Quiz.objects.all() if quiz.is_active() and quiz.is_valid()]
 
 
 class QuizView(generic.DetailView):
@@ -25,10 +26,16 @@ class QuizView(generic.DetailView):
     model = Quiz
 
 
-class QuestionView(generic.DetailView):
-    context_object_name = 'question'
-    template_name = 'quiz/question.html'
-    model = Question
+def quiz(request, pk):
+    selected_quiz = get_object_or_404(Quiz, pk=pk)
+    if (selected_quiz.is_valid() and selected_quiz.is_active()) or DEBUG:
+        context = {
+            'quiz': selected_quiz,
+        }
+        return render(request, 'quiz/quiz.html', context)
+    else:
+        raise Http404("Quiz does not exist!")
+
 
 
 def submit(request, quiz_id, question_format="question{}"):
@@ -43,7 +50,7 @@ def submit(request, quiz_id, question_format="question{}"):
 
     prediction_set = {}
 
-    for prediction in Prediction.objects.filter(quiz=quiz):
+    for prediction in quiz.prediction_set.all():
         prediction_set[prediction.pk] = 0
 
     for question in quiz.question_set.all():

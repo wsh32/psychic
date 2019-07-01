@@ -15,6 +15,14 @@ class Quiz(models.Model):
     def is_active(self, time_to_check=timezone.now()):
         return time_to_check >= self.pub_date and time_to_check <= self.exp_date
 
+    def is_valid(self):
+        if not self.question_set.all():
+            return False
+        for question in self.question_set.all():
+            if not question.is_valid():
+                return False
+        return True
+
 
 class Question(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
@@ -22,6 +30,17 @@ class Question(models.Model):
 
     def __str__(self):
         return self.question_text
+
+    def is_valid(self):
+        """
+        Criteria for a valid question: must have 2+ choices, must have only valid choices
+        """
+        if not self.choice_set.all() and len(self.choice_set.all()) >= 2:
+            return False
+        for choice in self.choice_set.all():
+            if not choice.is_valid():
+                return False
+        return True
 
 
 class Prediction(models.Model):
@@ -40,4 +59,12 @@ class Choice(models.Model):
 
     def __str__(self):
         return self.choice_text
+
+    def is_valid(self):
+        """
+        Criteria for a valid choice: prediction and question must be of the same quiz
+        """
+        if self.prediction.quiz.pk != self.question.quiz.pk:
+            return False
+        return True
 
