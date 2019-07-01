@@ -24,11 +24,19 @@ class Question(models.Model):
         return self.question_text
 
 
+class Prediction(models.Model):
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    prediction_title = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.prediction_title
+
+
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)
-    score = models.FloatField()
-    votes = models.IntegerField(default=0)
+    prediction = models.ForeignKey(Prediction, on_delete=models.SET_NULL, null=True)
+    weight = models.FloatField()
 
     def __str__(self):
         return self.choice_text

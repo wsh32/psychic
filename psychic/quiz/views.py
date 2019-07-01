@@ -5,7 +5,7 @@ from django.views import generic
 from django.http import HttpResponse
 from dicttoxml import dicttoxml
 
-from .models import Quiz, Question, Choice
+from .models import Quiz, Question, Choice, Prediction
 
 
 class IndexView(generic.ListView):
@@ -41,13 +41,27 @@ def submit(request, quiz_id, question_format="question{}"):
     if 'email' in request.POST.keys():
         quiz_results['email'] = request.POST['email']
 
+    prediction_set = {}
+
+    for prediction in Prediction.objects.filter(quiz=quiz):
+        prediction_set[prediction.pk] = 0
+
     for question in quiz.question_set.all():
         if not question_format.format(question.id) in request.POST.keys():
             # Throw error for unfinished quiz
             pass
         else:
             selected_choice = get_object_or_404(Choice, pk=request.POST[question_format.format(question.id)])
+            selected_prediction = selected_choice.prediction
+            prediction_set[selected_prediction.pk] += selected_choice.weight
             quiz_results[question.question_text] = selected_choice.choice_text
+
+    quiz_results['prediction_set'] = prediction_set
+
+    final_prediction_pk = max(prediction_set.keys(), key=(lambda k: prediction_set[k]))
+    final_prediction = Prediction.objects.get(pk=final_prediction_pk)
+
+    quiz_results['prediction'] = final_prediction.prediction_title
 
     return HttpResponse(json.dumps(quiz_results))
 
