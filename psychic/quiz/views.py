@@ -14,9 +14,9 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
         """
-        Return the last 5 valid published quizzes
+        Return all valid quizzes
         """
-        return Quiz.objects.order_by('-pub_date')[:5]
+        return [quiz for quiz in Quiz.objects.all() if quiz.is_active()]
 
 
 class QuizView(generic.DetailView):
@@ -34,6 +34,13 @@ class QuestionView(generic.DetailView):
 def submit(request, quiz_id, question_format="question{}"):
     quiz = get_object_or_404(Quiz, pk=quiz_id)
     quiz_results = {}
+
+    if 'name' in request.POST.keys():
+        quiz_results['name'] = request.POST['name']
+
+    if 'email' in request.POST.keys():
+        quiz_results['email'] = request.POST['email']
+
     for question in quiz.question_set.all():
         if not question_format.format(question.id) in request.POST.keys():
             # Throw error for unfinished quiz
@@ -41,5 +48,6 @@ def submit(request, quiz_id, question_format="question{}"):
         else:
             selected_choice = get_object_or_404(Choice, pk=request.POST[question_format.format(question.id)])
             quiz_results[question.question_text] = selected_choice.choice_text
+
     return HttpResponse(json.dumps(quiz_results))
 
