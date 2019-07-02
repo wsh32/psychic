@@ -12,7 +12,6 @@
         <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         <link type="text/css" rel="stylesheet" href="{% static 'css/materialize.css' %}">
         <link type="text/css" rel="stylesheet" href="{% static 'quiz/css/quiz.css' %}">
-        <link type="text/css" rel="stylesheet" href="{% static 'quiz/css/palette.css' %}">
         {% block css %}{% endblock %}
     </head>
 
@@ -58,9 +57,9 @@
                     <div class="col m3 s12 offset-m1">
                         <h5 class="text-primary-color">Pages</h5>
                         <ul>
-                            <li><a class="text-primary-color" href="{% url 'quiz:index' %}">Home</a></li>
+                            <li><a class="grey-text text-lighten-2" href="{% url 'quiz:index' %}">Home</a></li>
                             {% for i in i|rjust:3 %}
-                            <li><a class="text-primary-color" href="{% url 'quiz:index' %}">{% lorem 2 w random %}</a></li>
+                            <li><a class="grey-text text-lighten-2" href="{% url 'quiz:index' %}">{% lorem 2 w random %}</a></li>
                             {% endfor %}
                     </div>
                 </div>
