@@ -68,3 +68,14 @@ class Choice(models.Model):
             return False
         return True
 
+class Submission(models.Model):
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    client_name = models.CharField(max_length=200)
+    client_email = models.CharField(max_length=200)
+    time_submitted = models.DateTimeField('time_submitted')
+    calculated_prediction = models.ForeignKey(Prediction, on_delete=models.SET_NULL, null=True)
+    choices = models.ManyToManyField(Choice)
+
+    def __str__(self):
+        return self.client_name.replace(" ", "")
+

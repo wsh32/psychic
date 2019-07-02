@@ -1,16 +1,14 @@
-import json
-
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
 from django.http import HttpResponse, Http404
 from django.utils import timezone
-from dicttoxml import dicttoxml
 
-from .models import Quiz, Question, Choice, Prediction
+from .models import Quiz, Question, Choice, Prediction, Submission
 from . import settings
 
 import os
 import pathlib
+import json
 
 
 class IndexView(generic.ListView):
@@ -45,7 +43,8 @@ def submit(request, quiz_id, question_format="question{}", save_path=settings.LO
     quiz = get_object_or_404(Quiz, pk=quiz_id)
     quiz_results = {}
 
-    quiz_results['time_submitted'] = timezone.now().isoformat()
+    time_submitted = timezone.now()
+    quiz_results['time_submitted'] = time_submitted.isoformat()
 
     if 'name' in request.POST.keys():
         quiz_results['name'] = request.POST['name']
@@ -59,10 +58,14 @@ def submit(request, quiz_id, question_format="question{}", save_path=settings.LO
         # TODO throw error for unfinished quiz
         pass
 
+   # Set up prediction set to sum relevant weights
     prediction_set = {}
 
     for prediction in quiz.prediction_set.all():
         prediction_set[prediction.pk] = 0
+
+    # Set up selected choices set
+    quiz_results['choices'] = {}
 
     for question in quiz.question_set.all():
         if not question_format.format(question.id) in request.POST.keys():
@@ -72,7 +75,7 @@ def submit(request, quiz_id, question_format="question{}", save_path=settings.LO
             selected_choice = get_object_or_404(Choice, pk=request.POST[question_format.format(question.id)])
             selected_prediction = selected_choice.prediction
             prediction_set[selected_prediction.pk] += selected_choice.weight
-            quiz_results[question.question_text] = selected_choice.choice_text
+            quiz_results['choices'][question.pk] = selected_choice.pk
 
     quiz_results['prediction_set'] = prediction_set
 
@@ -82,14 +85,19 @@ def submit(request, quiz_id, question_format="question{}", save_path=settings.LO
     quiz_results['prediction'] = final_prediction.prediction_title
 
     # Collect client data
-    quiz_results['client_data'] = _get_client_data()
+    quiz_results['client_data'] = _get_client_data(request)
 
-    # Save data
-    log_subdir = str(quiz.pk)
-    filename = "{}.json".format(request.POST['name'].replace(" ", ""))
-    _log_json(save_path, log_subdir, filename)
+    # Write submission to database
+    submission = Submission(quiz=quiz, client_name=quiz_results['name'],
+                            client_email=quiz_results['email'], time_submitted=time_submitted,
+                            calculated_prediction=final_prediction)
+    submission.save()
 
-    return HttpResponse(json.dumps(quiz_results))
+    for choice_pk in quiz_results['choices'].values():
+        submission.choices.add(Choice.objects.get(pk=choice_pk))
+
+    # XXX: Temporary, for now just return the json of the data. Eventually make this into a page
+    return HttpResponse(json.dumps(quiz_results), content_type='application/json')
 
 
 def _get_client_data(request):
@@ -103,15 +111,4 @@ def _get_client_data(request):
     }
 
     return client_data
-
-
-def _log_json(save_path, log_subdir, filename):
-    # Save data
-    logdir = os.path.join(save_path, log_subdir)
-    if not os.path.exists(save_path):
-        pathlib.Path(logdir).mkdir(parents=True, exist_ok=True)
-
-    # Write data
-    with open(os.path.join(logdir, filename), 'w') as outfile:
-        json.dump(quiz_results, outfile)
 
