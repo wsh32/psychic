@@ -1,0 +1,39 @@
+main {
+    flex: 1 0 auto;
+}
+
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    overflow-y: scroll;
+}
+
+header, footer {
+    flex-shrink: 0;
+}
+
+ul.sidenav li.logo {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+ul.sidenav li.logo:hover {
+    background-color: transparent;
+}
+
+#logo-container {
+    height: 80px;
+    margin-bottom: 32px;
+}
+
+#front-page-logo {
+    display: inline-block;
+    height: 100%;
+    pointer-events: none;
+}
+
+#slide-out, #nav-mobile {
+    overflow-y: auto;
+}
+

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% load static %}
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+
+        <link rel="icon" type="image/png" href="{% static 'quiz/img/favicon.png' %}">
+        
+        <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link type="text/css" rel="stylesheet" href="{% static 'css/materialize.css' %}">
+        <link type="text/css" rel="stylesheet" href="{% static 'quiz/css/quiz.css' %}">
+        {% block css %}{% endblock %}
+    </head>
+
+    <body>
+        <header>
+            <nav class="blue darken-3" role="navigation">
+                <div class="container">
+                    <div class="nav-wrapper">
+                        <a id="logo-container" href="{% url 'quiz:index' %}" class="brand-logo hide-on-med-and-down">Psychic</a>
+                        <ul class="right hide-on-med-and-down">
+                            <li><a class="waves-effect waves-light" href="{% url 'quiz:index' %}">Home</a></li>
+                        </ul>
+
+                        <ul id="nav-mobile" class="sidenav">
+                            <!--<li class="logo center"><a id="logo-container" href="{% url 'quiz:index' %}" class="brand-logo">
+                                <img id="front-page-logo" type="image/png" src="{% static 'quiz/img/favicon.png' %}">
+                            </a></li>-->
+                            <li class="logo center">
+                                <a href="{% url 'quiz:index' %}" id="logo-container">
+                                    <img src="{% static 'quiz/img/favicon.png' %}" id="front-page-logo">
+                                </a>
+                            </li>
+                            <div class="divider"></div>
+                            <li><a href="{% url 'quiz:index' %}">Home</a></li>
+                        </ul>
+                        <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            {% block main %}{% endblock %}
+        </main>
+
+        <footer class="grey darken-3 page-footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col m6 s12">
+                        <h5 class="text-primary-color">Psychic</h5>
+                        <p class="text-primary-color">{% lorem b %}</p>
+                    </div>
+                    <div class="col m3 s12 offset-m1">
+                        <h5 class="text-primary-color">Pages</h5>
+                        <ul>
+                            <li><a class="grey-text text-lighten-2" href="{% url 'quiz:index' %}">Home</a></li>
+                            {% for i in i|rjust:3 %}
+                            <li><a class="grey-text text-lighten-2" href="{% url 'quiz:index' %}">{% lorem 2 w random %}</a></li>
+                            {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-copyright">
+                <div class="container">
+                    &copy; Wesley Soo-Hoo 2019 | made with <a class="grey-text text-lighten-2" href="materializecss.com" target="_blank">MaterializeCSS</a>
+                    <a class="grey-text text-lighten-2 right modal-trigger" href="#license">MIT License</a>
+                </div>
+            </div>
+
+            <div id="license" class="modal bottom-sheet">
+                <div class="modal-content primary-text-color container">
+                    <h4>The MIT License (MIT)</h4>
+                    <p> Copyright &copy; 2019 Wesley Soo-Hoo <br><br>
+                    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.<br><br>
+                    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p><br>
+                </div>
+            </div> 
+        </footer>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="{% static 'js/materialize.js' %}"></script>
+        <script src="{% static 'quiz/js/init.js' %}"></script>
+    </body>
+</html>

@@ -1,0 +1,45 @@
+{% extends 'quiz/base.html' %}
+
+{% block main %}
+<div class="container">
+    {% if quiz and quiz.question_set.all %}
+    <h1 class="light center">{{ quiz.title }}</h1>
+    <form action="{% url 'quiz:submit' quiz.id %}" method="post" class="col s12">
+        {% csrf_token %}
+        <div class="row">
+            <div class="input-field col m6 s12">
+                <i class="material-icons prefix">account_circle</i>
+                <input type="text" name="name" id="name" class="validate" required>
+                <label for="name">Name</label>
+            </div>
+
+            <div class="input-field col m6 s12">
+                <i class="material-icons prefix">email</i>
+                <input type="email" name="email" id="email" class="validate" required>
+                <label for="email">Email address</label>
+            </div>
+        </div>
+
+        {% for question in quiz.question_set.all %}
+            {% if question.choice_set.all %}
+                <!-- Question {{ question.id }} -->
+                <b>{{ question.question_text }}</b><br>
+                {% for choice in question.choice_set.all %}
+                    <p>
+                        <label>
+                            <input type="radio" name="question{{ question.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" required>
+                            <span class="grey-text text-darken-3">{{ choice.choice_text }}</span>
+                        </label>
+                    </p>
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+        <button class="blue darken-3 btn waves-effect waves-light" type="submit" name="action">Submit
+            <i class="material-icons right">send</i>
+        </button>
+    </form>
+    {% else %}
+        No quiz
+    {% endif %}
+</div>
+{% endblock %}
