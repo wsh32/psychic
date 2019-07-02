@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.utils import timezone
 
 from .models import Quiz, Question, Choice, Prediction, Submission
@@ -46,17 +46,15 @@ def submit(request, quiz_id, question_format="question{}", save_path=settings.LO
     time_submitted = timezone.now()
     quiz_results['time_submitted'] = time_submitted.isoformat()
 
-    if 'name' in request.POST.keys():
+    if 'name' in request.POST.keys() and request.POST['name']:
         quiz_results['name'] = request.POST['name']
     else:
-        # TODO throw error for unfinished quiz
-        pass
+        return HttpResponseBadRequest("No name provided!")
 
-    if 'email' in request.POST.keys():
+    if 'email' in request.POST.keys() and request.POST['email']:
         quiz_results['email'] = request.POST['email']
     else:
-        # TODO throw error for unfinished quiz
-        pass
+        return HttpResponseBadRequest("No email provided!")
 
    # Set up prediction set to sum relevant weights
     prediction_set = {}
@@ -69,8 +67,7 @@ def submit(request, quiz_id, question_format="question{}", save_path=settings.LO
 
     for question in quiz.question_set.all():
         if not question_format.format(question.id) in request.POST.keys():
-            # Throw error for unfinished quiz
-            pass
+            return HttpResponseBadRequest("Please answer all of the questions")
         else:
             selected_choice = get_object_or_404(Choice, pk=request.POST[question_format.format(question.id)])
             selected_prediction = selected_choice.prediction
