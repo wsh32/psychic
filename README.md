@@ -34,14 +34,11 @@ cd psychic
 
 5. Open `localhost:8000` in a web browser
 
-### To do:
+### Changes to make for deployment
 
-- [ ] Make everything work
-- [x] Get dev server up and running
-- [x] Quiz display handling
-- [ ] Backend quiz data handling
-- [ ] Logging API
-- [ ] Quiz entry interface
-- [ ] Front end design
-- [ ] Deployment process
+1. `settings.py`
+    - Set `DEBUG` to False
+    - Set `ALLOWED_HOSTS`
+2. `~/.bashrc`
+    - Add `export SECRET_KEY="(insert secret key here)"`
 

@@ -11,19 +11,27 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'g5!wcn=@&5xx8hfydc&vyov#d1y$hot1)fpam2wi9ilhqz=i&%'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+
+# SECURITY WARNING: keep the secret key used in production secret!
+try:
+    SECRET_KEY = os.environ['SECRET_KEY']
+except KeyError:
+    if DEBUG:
+        SECRET_KEY = 'g5!wcn=@&5xx8hfydc&vyov#d1y$hot1)fpam2wi9ilhqz=i&%'
+    else:
+        raise ImproperlyConfigured('Secret Key environment variable not set!')
+
 
 ALLOWED_HOSTS = ['*']  # XXX Warning: do not use set to '*' in production!
 
