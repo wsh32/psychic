@@ -28,7 +28,7 @@ class QuestionAdmin(admin.ModelAdmin):
 
 class QuizAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['title']}),
+        (None, {'fields': ['title', 'submit_text']}),
         ('Date Information', {'fields': ['pub_date', 'exp_date'], 'classes': ['collapse']}),
     ]
     inlines = [PredictionInLine, QuestionInLine]

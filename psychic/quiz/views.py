@@ -8,7 +8,6 @@ from . import settings
 
 import os
 import pathlib
-import json
 
 
 class IndexView(generic.ListView):
@@ -93,8 +92,14 @@ def submit(request, quiz_id, question_format="question{}", save_path=settings.LO
     for choice_pk in quiz_results['choices'].values():
         submission.choices.add(Choice.objects.get(pk=choice_pk))
 
-    # XXX: Temporary, for now just return the json of the data. Eventually make this into a page
-    return HttpResponse(json.dumps(quiz_results), content_type='application/json')
+    return submit_response(request, quiz)
+
+
+def submit_response(request, quiz):
+    context = {
+        'quiz': quiz,
+    }
+    return render(request, 'quiz/submit.html', context)
 
 
 def _get_client_data(request):
