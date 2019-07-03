@@ -25,12 +25,13 @@ DEBUG = True
 
 # SECURITY WARNING: keep the secret key used in production secret!
 try:
-    SECRET_KEY = os.environ['SECRET_KEY']
+    with open('/etc/secret_key.txt') as f:
+        SECRET_KEY = f.read().strip()
 except KeyError:
     if DEBUG:
         SECRET_KEY = 'g5!wcn=@&5xx8hfydc&vyov#d1y$hot1)fpam2wi9ilhqz=i&%'
     else:
-        raise ImproperlyConfigured('Secret Key environment variable not set!')
+        raise ImproperlyConfigured('Secret key file does not exist!')
 
 
 ALLOWED_HOSTS = ['*']  # XXX Warning: do not use set to '*' in production!
