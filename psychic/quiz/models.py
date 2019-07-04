@@ -7,7 +7,7 @@ from django.utils import timezone
 class Quiz(models.Model):
     title = models.CharField(max_length=200)
     submit_text = models.TextField(default='Your response was recorded. Thank you!')
-    pub_date = models.DateTimeField('publish_date', default=timezone.now())
+    pub_date = models.DateTimeField('publish_date', default=timezone.now)
     exp_date = models.DateTimeField('expire_date', default=timezone.now()+datetime.timedelta(days=365))
 
     def __str__(self):
@@ -38,7 +38,7 @@ class Question(models.Model):
         """
         Criteria for a valid question: must have 2+ choices, must have only valid choices
         """
-        if not self.choice_set.all() and len(self.choice_set.all()) >= 2:
+        if not self.choice_set.all() or len(self.choice_set.all()) < 2:
             return False
         for choice in self.choice_set.all():
             if not choice.is_valid():
