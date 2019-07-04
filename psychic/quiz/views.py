@@ -10,6 +10,22 @@ import os
 import pathlib
 
 
+def handler400(request, *args, **argv):
+    return render(request, 'quiz/400.html')
+
+
+def handler403(request, *args, **argv):
+    return render(request, 'quiz/403.html')
+
+
+def handler404(request, *args, **argv):
+    return render(request, 'quiz/404.html')
+
+
+def handler500(request, *args, **argv):
+    return render(request, 'quiz/500.html')
+
+
 class IndexView(generic.ListView):
     template_name = 'quiz/index.html'
     context_object_name = 'quiz_list'

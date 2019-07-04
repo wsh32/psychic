@@ -16,6 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+handler400 = 'quiz.views.handler400'
+handler403 = 'quiz.views.handler403'
+handler404 = 'quiz.views.handler404'
+handler500 = 'quiz.views.handler500'
+
 urlpatterns = [
     path('', include('quiz.urls')),
     path('admin/', admin.site.urls),
