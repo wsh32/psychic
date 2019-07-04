@@ -15,6 +15,7 @@ class Quiz(models.Model):
 
     def is_active(self, time_to_check=timezone.now()):
         return time_to_check >= self.pub_date and time_to_check <= self.exp_date
+    is_active.boolean = True
 
     def is_valid(self):
         if not self.question_set.all():
@@ -23,6 +24,7 @@ class Quiz(models.Model):
             if not question.is_valid():
                 return False
         return True
+    is_valid.boolean = True
 
 
 class Question(models.Model):

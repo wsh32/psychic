@@ -24,6 +24,7 @@ class QuestionInLine(admin.TabularInline):
 class QuestionAdmin(admin.ModelAdmin):
     fields = ['quiz', 'question_text']
     inlines = [ChoiceInLine]
+    list_display = ('question_text', 'quiz')
 
 
 class QuizAdmin(admin.ModelAdmin):
@@ -32,9 +33,14 @@ class QuizAdmin(admin.ModelAdmin):
         ('Date Information', {'fields': ['pub_date', 'exp_date'], 'classes': ['collapse']}),
     ]
     inlines = [PredictionInLine, QuestionInLine]
+    list_display = ('title', 'is_active', 'is_valid')
+
+
+class SubmissionAdmin(admin.ModelAdmin):
+    list_display = ('client_name', 'time_submitted', 'calculated_prediction')
 
 
 admin.site.register(Quiz, QuizAdmin)
 admin.site.register(Question, QuestionAdmin)
-admin.site.register(Submission)
+admin.site.register(Submission, SubmissionAdmin)
 
