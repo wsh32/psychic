@@ -35,7 +35,7 @@ def quiz(request, pk):
         }
         return render(request, 'quiz/quiz.html', context)
     else:
-        raise Http404("Quiz does not exist!")
+        return render(request, 'quiz/invalid.html')
 
 
 def submit(request, quiz_id, question_format="question{}", save_path=settings.LOG_DIR):
