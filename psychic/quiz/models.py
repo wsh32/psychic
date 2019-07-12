@@ -6,6 +6,7 @@ from django.utils import timezone
 
 class Quiz(models.Model):
     title = models.CharField(max_length=200)
+    description_text = models.TextField()
     submit_text = models.TextField(default='Your response was recorded. Thank you!')
     pub_date = models.DateTimeField('publish_date', default=timezone.now)
     exp_date = models.DateTimeField('expire_date', default=timezone.now()+datetime.timedelta(days=365))
