@@ -1,4 +1,4 @@
-dicttoxml==1.7.4
 Django==2.2.2
+gunicorn==19.9.0
 pytz==2019.1
 sqlparse==0.3.0

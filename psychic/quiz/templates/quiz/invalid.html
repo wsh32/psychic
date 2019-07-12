@@ -1,0 +1,14 @@
+{% extends "quiz/base.html" %} 
+{% include "quiz/header.html" %}
+{% load static %}
+
+{% block title %}404 Error{% endblock %}
+
+{% block main %}
+    <div class="container center">
+        <h5 class="light">Quiz not found!<h5>
+
+        <a href="{% url 'quiz:index' %}" class="return"><img src="{% static 'quiz/img/boba.gif' %}"></a>
+    </div>
+{% endblock %}
+

@@ -1,5 +1,7 @@
 {% extends 'quiz/base.html' %}
 
+{% block title %}{{ quiz.title }}{% endblock %}
+
 {% block main %}
 <div class="container">
     {% if quiz and quiz.question_set.all %}

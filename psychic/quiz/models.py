@@ -6,14 +6,17 @@ from django.utils import timezone
 
 class Quiz(models.Model):
     title = models.CharField(max_length=200)
-    pub_date = models.DateTimeField('publish_date')
-    exp_date = models.DateTimeField('expire_date')
+    description_text = models.TextField()
+    submit_text = models.TextField(default='Your response was recorded. Thank you!')
+    pub_date = models.DateTimeField('publish_date', default=timezone.now)
+    exp_date = models.DateTimeField('expire_date', default=timezone.now()+datetime.timedelta(days=365))
 
     def __str__(self):
         return self.title
 
     def is_active(self, time_to_check=timezone.now()):
         return time_to_check >= self.pub_date and time_to_check <= self.exp_date
+    is_active.boolean = True
 
     def is_valid(self):
         if not self.question_set.all():
@@ -22,6 +25,7 @@ class Quiz(models.Model):
             if not question.is_valid():
                 return False
         return True
+    is_valid.boolean = True
 
 
 class Question(models.Model):
@@ -35,7 +39,7 @@ class Question(models.Model):
         """
         Criteria for a valid question: must have 2+ choices, must have only valid choices
         """
-        if not self.choice_set.all() and len(self.choice_set.all()) >= 2:
+        if not self.choice_set.all() or len(self.choice_set.all()) < 2:
             return False
         for choice in self.choice_set.all():
             if not choice.is_valid():

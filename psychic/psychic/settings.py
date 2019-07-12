@@ -11,19 +11,28 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'g5!wcn=@&5xx8hfydc&vyov#d1y$hot1)fpam2wi9ilhqz=i&%'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+
+# SECURITY WARNING: keep the secret key used in production secret!
+try:
+    with open('/etc/secret_key.txt') as f:
+        SECRET_KEY = f.read().strip()
+except KeyError:
+    if DEBUG:
+        SECRET_KEY = 'g5!wcn=@&5xx8hfydc&vyov#d1y$hot1)fpam2wi9ilhqz=i&%'
+    else:
+        raise ImproperlyConfigured('Secret key file does not exist!')
+
 
 ALLOWED_HOSTS = ['*']  # XXX Warning: do not use set to '*' in production!
 
@@ -119,3 +128,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
