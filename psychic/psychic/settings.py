@@ -27,7 +27,7 @@ DEBUG = True
 try:
     with open('/etc/secret_key.txt') as f:
         SECRET_KEY = f.read().strip()
-except KeyError:
+except FileNotFoundError:
     if DEBUG:
         SECRET_KEY = 'g5!wcn=@&5xx8hfydc&vyov#d1y$hot1)fpam2wi9ilhqz=i&%'
     else:
