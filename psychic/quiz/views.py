@@ -55,7 +55,7 @@ def submit(request, quiz_id, question_format="question{}", save_path=settings.LO
     else:
         return HttpResponseBadRequest("No email provided!")
 
-   # Set up prediction set to sum relevant weights
+    # Set up prediction set to sum relevant weights
     prediction_set = {}
 
     for prediction in quiz.prediction_set.all():
@@ -69,8 +69,9 @@ def submit(request, quiz_id, question_format="question{}", save_path=settings.LO
             return HttpResponseBadRequest("Please answer all of the questions")
         else:
             selected_choice = get_object_or_404(Choice, pk=request.POST[question_format.format(question.id)])
-            selected_prediction = selected_choice.prediction
-            prediction_set[selected_prediction.pk] += selected_choice.weight
+            selected_predictions = [i for i in [selected_choice.prediction, selected_choice.prediction2, selected_choice.prediction3, selected_choice.prediction4, selected_choice.prediction5] if i is not None]
+            for prediction in selected_predictions:
+                prediction_set[prediction.pk] += selected_choice.weight
             quiz_results['choices'][question.pk] = selected_choice.pk
 
     quiz_results['prediction_set'] = prediction_set

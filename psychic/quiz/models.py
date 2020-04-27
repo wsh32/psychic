@@ -58,7 +58,11 @@ class Prediction(models.Model):
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)
-    prediction = models.ForeignKey(Prediction, on_delete=models.SET_NULL, null=True)
+    prediction = models.ForeignKey(Prediction, on_delete=models.SET_NULL, null=True, related_name='prediction1')
+    prediction2 = models.ForeignKey(Prediction, on_delete=models.SET_NULL, null=True, blank=True, related_name='prediction2')
+    prediction3 = models.ForeignKey(Prediction, on_delete=models.SET_NULL, null=True, blank=True, related_name='prediction3')
+    prediction4 = models.ForeignKey(Prediction, on_delete=models.SET_NULL, null=True, blank=True, related_name='prediction4')
+    prediction5 = models.ForeignKey(Prediction, on_delete=models.SET_NULL, null=True, blank=True, related_name='prediction5')
     weight = models.FloatField()
 
     def __str__(self):
